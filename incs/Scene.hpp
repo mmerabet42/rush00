@@ -4,6 +4,8 @@
 # include "List.hpp"
 # include "GameEntity.hpp"
 
+typedef List<List<GameEntity *>::iterator> DestroyQueue;
+
 class Scene
 {
 public:
@@ -13,10 +15,16 @@ public:
 	Scene(const Scene &p_scene);
 	Scene &operator=(const Scene &p_scene);
 
+	void addEntity(GameEntity *p_entity);
+	void destroy(GameEntity *p_entity);
 
+	void update();
+
+	List<GameEntity *> entities() const;
 
 private:
 	List<GameEntity *> _entities;
+	DestroyQueue _destroyQueue;
 };
 
 #endif // SCENE_HPP

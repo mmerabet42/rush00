@@ -3,7 +3,7 @@ CFLAGS = -Wall -Wextra -Werror
 
 NAME = ft_retro
 
-_SOURCES = GameEntity.cpp Point.cpp momo_main.cpp
+_SOURCES = GameEntity.cpp Point.cpp Behavior.cpp momo_main.cpp Scene.cpp
 SOURCES = $(addprefix srcs/,$(_SOURCES))
 
 _INCLUDES = LinkedList.hpp List.hpp Pair.hpp GameEntity.hpp Point.hpp

@@ -1,6 +1,8 @@
 #ifndef LINKEDLIST_HPP
 # define LINKEDLIST_HPP
 
+# include <cstddef>
+
 template <typename T>
 class LinkedList
 {

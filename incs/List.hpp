@@ -16,12 +16,12 @@ public:
 	List(const List<T> &p_list);
 	List<T> &operator=(const List<T> &p_list);
 
-	const LinkedList<T> *begin() const;
-	LinkedList<T> *begin();
-	const LinkedList<T> *end() const;
-	LinkedList<T> *end();
-	const LinkedList<T> *last() const;
-	LinkedList<T> *last();
+	const List<T>::iterator begin() const;
+	List<T>::iterator begin();
+	const List<T>::iterator end() const;
+	List<T>::iterator end();
+	const List<T>::iterator last() const;
+	List<T>::iterator last();
 
 	size_t size() const;
 
@@ -36,7 +36,9 @@ public:
 
 	List<T>::iterator insert(const T &p_value, const int &p_index);
 	List<T>::iterator erase(const int &p_index);
-	List<T>::iterator erase(const List<T>::iterator &p_it);
+	List<T>::iterator erase(List<T>::iterator &p_it);
+
+	void clear();
 
 private:
 	LinkedList<T> _end;
@@ -75,43 +77,43 @@ List<T>::List(const List<T> &p_list)
 template <typename T>
 List<T> &List<T>::operator=(const List<T> &p_list)
 {
-	for (List<T>::const_iterator it = p_list.begin(); it != p_list.end(); it = it->next())
+	for (List<T>::const_iterator it = p_list.begin(); it != &p_list._end; it = it->next())
 		push(it->value());
 	return *this;
 }
 
 template <typename T>
-const LinkedList<T> *List<T>::begin() const
+const typename List<T>::iterator List<T>::begin() const
 {
 	return this->_begin;
 }
 
 template <typename T>
-LinkedList<T> *List<T>::begin()
+typename List<T>::iterator List<T>::begin()
 {
 	return this->_begin;
 }
 
 template <typename T>
-const LinkedList<T> *List<T>::end() const
+const typename List<T>::iterator List<T>::end() const
 {
 	return &this->_end;
 }
 
 template <typename T>
-LinkedList<T> *List<T>::end()
+typename List<T>::iterator List<T>::end()
 {
 	return &this->_end;
 }
 
 template <typename T>
-const LinkedList<T> *List<T>::last() const
+const typename List<T>::iterator List<T>::last() const
 {
 	return this->_tail;
 }
 
 template <typename T>
-LinkedList<T> *List<T>::last()
+typename List<T>::iterator List<T>::last()
 {
 	return this->_tail;
 }
@@ -255,7 +257,7 @@ typename List<T>::iterator List<T>::erase(const int &p_index)
 }
 
 template <typename T>
-typename List<T>::iterator List<T>::erase(const List<T>::iterator &p_it)
+typename List<T>::iterator List<T>::erase(List<T>::iterator &p_it)
 {
 	List<T>::iterator it = this->at(p_it);
 	if (it == this->end())
@@ -269,8 +271,24 @@ typename List<T>::iterator List<T>::erase(const List<T>::iterator &p_it)
 	it->next()->setPrev(tmp);
 	tmp = it->next();
 	delete it;
+	p_it = nullptr;
 	--this->_size;
 	return tmp;
+}
+
+template <typename T>
+void List<T>::clear()
+{
+	LinkedList<T> *it = this->_begin;
+	while (it != &this->_end)
+	{
+		LinkedList<T> *tmp = it->next();
+		delete it;
+		it = tmp;
+	}
+	this->_begin = &this->_end;
+	this->_end.setPrev(nullptr);
+	this->_tail = nullptr;
 }
 
 #endif // LINKEDLIST_HPP

@@ -5,7 +5,10 @@ GameEntity::GameEntity()
 {}
 
 GameEntity::~GameEntity()
-{}
+{
+	for (List<BehaviorPair>::iterator it = this->_behaviors.begin(); it != this->_behaviors.end(); it = it->next())
+		delete it->value().b();
+}
 
 GameEntity::GameEntity(const GameEntity &p_gameEntity)
 {
@@ -31,6 +34,16 @@ int GameEntity::x() const
 int GameEntity::y() const
 {
 	return this->_y;
+}
+
+Scene *GameEntity::scene() const
+{
+	return this->_scene;
+}
+
+void GameEntity::setScene(Scene *p_scene)
+{
+	this->_scene = p_scene;
 }
 
 void GameEntity::setPos(const int &p_x, const int &p_y)
@@ -71,4 +84,10 @@ bool GameEntity::collidesWith(const GameEntity &p_entity) const
 			if (this->getPointX(i) == p_entity.getPointY(j) && this->getPointY(i) == p_entity.getPointY(j))
 				return true;
 	return false;
+}
+
+void GameEntity::update()
+{
+	for (List<BehaviorPair>::iterator it = this->_behaviors.begin(); it != this->_behaviors.end(); it = it->next())
+		it->value().b()->update();
 }

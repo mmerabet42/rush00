@@ -1,5 +1,6 @@
 #include <iostream>
 #include "GameEntity.hpp"
+#include "Scene.hpp"
 
 class A : public GameEntity
 {
@@ -24,12 +25,29 @@ public:
 	}
 };
 
+class Move: public Behavior
+{
+public:
+	void update()
+	{
+		this->entity()->scene()->destroy(this->entity());
+	}
+};
+
 int main()
 {
-	A a(-2, -3);
-	A b(0, 0);
+	Scene scene;
 
-	std::cout << a.collidesWith(b) << std::endl;
+	A *a = new A(-2, -3);
+	a->addBehavior<Move>();
+	A *b = new A(0, 0);
+
+	scene.addEntity(a);
+	scene.addEntity(b);
+
+	std::cout << scene.entities().size() << std::endl;
+	scene.update();
+	std::cout << scene.entities().size() << std::endl;
 
 	return 0;
 }
