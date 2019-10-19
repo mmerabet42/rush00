@@ -3,7 +3,7 @@ CFLAGS = -Wall -Wextra -Werror
 
 NAME = ft_retro
 
-_SOURCES = GameEntity.cpp Point.cpp Behavior.cpp momo_main.cpp Scene.cpp
+_SOURCES = GameEntity.cpp Point.cpp Behavior.cpp Scene.cpp main.cpp
 SOURCES = $(addprefix srcs/,$(_SOURCES))
 
 _INCLUDES = LinkedList.hpp List.hpp Pair.hpp GameEntity.hpp Point.hpp
@@ -16,7 +16,7 @@ all:
 
 $(NAME): $(OBJECTS)
 	@echo "Compiling $(NAME)..."
-	@$(COMPILER) $(CFLAGS) $(OBJECTS) -o $(NAME)
+	@$(COMPILER) $(CFLAGS) $(OBJECTS) -o $(NAME) -lncurses
 	@echo "$(NAME) done."
 
 %.o: %.cpp $(INCLUDES) Makefile
