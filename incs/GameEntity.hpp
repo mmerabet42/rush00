@@ -42,11 +42,18 @@ public:
 
 	template <typename T_Behavior>
 	T_Behavior *addBehavior();
-	
+
+	template <typename T_Behavior>
+	T_Behavior *getBehavior() const;
+
 	void update();
 
 	virtual Point *getPoints() const = 0;
 	virtual int getPointsSize() const = 0;
+
+private:
+	template <typename T>
+	const std::type_info *getTypeInfo() const;
 
 protected:
 	int _x;
@@ -60,7 +67,7 @@ protected:
 template <typename T_Behavior>
 T_Behavior *GameEntity::addBehavior()
 {
-	static const std::type_info *t = &typeid(T_Behavior);
+	static const std::type_info *t = this->getTypeInfo<T_Behavior>();
 
 	for (List<BehaviorPair>::iterator it = this->_behaviors.begin(); it != this->_behaviors.end(); it = it->next())
 		if (it->value().a() == t)
@@ -71,6 +78,25 @@ T_Behavior *GameEntity::addBehavior()
 	bv->setEntity(this);
 	this->_behaviors.push(BehaviorPair(t, bv));
 	return bv;
+}
+
+
+template <typename T_Behavior>
+T_Behavior *GameEntity::getBehavior() const
+{
+	static const std::type_info *t = this->getTypeInfo<T_Behavior>();
+
+	for (List<BehaviorPair>::iterator it = this->_behaviors.begin(); it != this->_behaviors.end(); it = it->next())
+		if (it->value().a() == t)
+			return it->value().b();
+	return nullptr;
+}
+
+template <typename T_Behavior>
+const std::type_info *GameEntity::getTypeInfo() const
+{
+	static const std::type_info *t = &typeid(T_Behavior);
+	return t;
 }
 
 #endif // GAMEENTITY_HPP
