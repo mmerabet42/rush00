@@ -31,6 +31,13 @@ public:
 	void pushFront(const T &p_value);
 	void popFront();
 
+	List<T>::iterator at(int p_index);
+	List<T>::iterator at(const List<T>::iterator &p_it);
+
+	List<T>::iterator insert(const T &p_value, const int &p_index);
+	List<T>::iterator erase(const int &p_index);
+	List<T>::iterator erase(const List<T>::iterator &p_it);
+
 private:
 	LinkedList<T> _end;
 	LinkedList<T> *_begin;
@@ -176,6 +183,94 @@ void List<T>::popFront()
 	if (this->_begin == &this->_end)
 		this->_tail = nullptr;
 	--this->_size;
+}
+
+template <typename T>
+typename List<T>::iterator List<T>::at(int p_index)
+{
+	while (p_index < 0)
+		p_index += (int)this->_size;
+	while (p_index >= (int)this->_size)
+		p_index -= (int)this->_size;
+
+	List<T>::iterator it = this->_begin;
+	for (size_t i = 0; i < this->_size; ++i)
+	{
+		if (i == (size_t)p_index)
+			return it;
+		it = it->next();
+	}
+	return this->end();
+}
+
+template <typename T>
+typename List<T>::iterator List<T>::at(const List<T>::iterator &p_it)
+{
+	List<T>::iterator it = this->_begin;
+	for (size_t i = 0; i < this->_size; ++i)
+	{
+		if (p_it == it)
+			return it;
+		it = it->next();
+	}
+	return this->end();
+}
+
+template <typename T>
+typename List<T>::iterator List<T>::insert(const T &p_value, const int &p_index)
+{
+	List<T>::iterator it = this->at(p_index);
+	if (it == this->end())
+		return this->end();
+
+	LinkedList<T> *llist = new LinkedList<T>(p_value);
+	if (!llist)
+		return this->end();
+	LinkedList<T> *tmp = it->next();
+	it->setNext(llist);
+	llist->setPrev(it);
+	llist->setNext(tmp);
+	tmp->setPrev(llist);
+	++this->_size;
+	return llist;
+}
+
+template <typename T>
+typename List<T>::iterator List<T>::erase(const int &p_index)
+{
+	List<T>::iterator it = this->at(p_index);
+	if (it == this->end())
+		return this->end();
+
+	LinkedList<T> *tmp = it->prev();
+	if (!tmp)
+		this->_begin = it->next();
+	else
+		tmp->setNext(it->next());
+	it->next()->setPrev(tmp);
+	tmp = it->next();
+	delete it;
+	--this->_size;
+	return tmp;
+}
+
+template <typename T>
+typename List<T>::iterator List<T>::erase(const List<T>::iterator &p_it)
+{
+	List<T>::iterator it = this->at(p_it);
+	if (it == this->end())
+		return this->end();
+
+	LinkedList<T> *tmp = it->prev();
+	if (!tmp)
+		this->_begin = it->next();
+	else
+		tmp->setNext(it->next());
+	it->next()->setPrev(tmp);
+	tmp = it->next();
+	delete it;
+	--this->_size;
+	return tmp;
 }
 
 #endif // LINKEDLIST_HPP

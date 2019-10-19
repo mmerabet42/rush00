@@ -14,8 +14,6 @@ public:
 	Enemy &operator=(const Enemy &p_enemy);
 
 	Enemy(const int &p_x, const int &p_y);
-
-	const std::string &type() const;
 };
 
 #endif // GAMEENTITY_HPP
