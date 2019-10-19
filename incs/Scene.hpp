@@ -13,6 +13,8 @@ public:
 	Scene(const Scene &p_scene);
 	Scene &operator=(const Scene &p_scene);
 
+
+
 private:
 	List<GameEntity *> _entities;
 };

@@ -2,7 +2,11 @@
 # define GAMEENTITY_HPP
 
 # include <string>
+# include <typeinfo>
 # include "Point.hpp"
+# include "Pair.hpp"
+
+//typedef Pair<std::type_info, Behavior *> BehaviorPair;
 
 class GameEntity
 {
@@ -28,13 +32,26 @@ public:
 	char getPointSymb(const int &p_i) const;
 
 	bool collidesWith(const GameEntity &p_entity) const;
-
+/*
+	template <typename T_Behavior>
+	T_Behavior *addBehavior();
+*/
 	virtual Point *getPoints() const = 0;
 	virtual int getPointsSize() const = 0;
 
 protected:
 	int _x;
 	int _y;
-};
 
+//	List<BehaviorInfo> _behaviors;
+};
+/*
+template <typename T_Behavior>
+T_Behavior *addBehavior()
+{
+	static std::type_info t = typeid(T_Behavior);
+
+	List<BehaviorInfo>::iterator ` 
+}
+*/
 #endif // GAMEENTITY_HPP
