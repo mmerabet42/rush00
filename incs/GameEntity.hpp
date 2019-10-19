@@ -1,13 +1,12 @@
 #ifndef GAMEENTITY_HPP
 # define GAMEENTITY_HPP
 
-# include "Pair.hpp"
-
-typedef Pair<int, int> Point;
+# include <string>
+# include "Point.hpp"
 
 class GameEntity
 {
-private:
+protected:
 	GameEntity();
 public:
 	~GameEntity();
@@ -24,10 +23,18 @@ public:
 	void setX(const int &p_x);
 	void setY(const int &p_y);
 
-	virtual Point *points() const = 0;
-	virtual int points_size() const = 0;
+	int getPointX(const int &p_i) const;
+	int getPointY(const int &p_i) const;
+	char getPointSymb(const int &p_i) const;
+
+	bool collidesWith(const GameEntity &p_entity) const;
+
+	virtual Point *getPoints() const = 0;
+	virtual int getPointsSize() const = 0;
+
 protected:
-	Point _pos;
+	int _x;
+	int _y;
 };
 
 #endif // GAMEENTITY_HPP
