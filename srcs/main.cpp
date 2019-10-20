@@ -8,6 +8,8 @@
 #include "Behavior.hpp"
 #include "Scene.hpp"
 #include "CanonicalForm.hpp"
+#include "Star.hpp"
+
 /*******************************************************************************/
 
 /*void DrawEnemy (Enemy enemy, Hero perso)
@@ -192,6 +194,8 @@ int main(void)
 {
 // EXAMPLE:
 	Scene scene;
+	time_t ptr;
+	std::srand(std::time(&ptr));
 
 	GameEntity *a = new GameEntity(10, 10);
 	a->addBehavior<InputBehavior>(); // ONLY THE PLAYER(S) WILL HAVE THIS BEHAVIOR
@@ -201,12 +205,25 @@ int main(void)
 	GameEntity *interface = new GameEntity(2, 2);
 	interface->addBehavior<InterfaceBehavior>();
 
-	GameEntity *background = new GameEntity(0, 0);
-	background->addBehavior<BackgroundBehavior>();
+	GameEntity *star1 = new GameEntity(0, 0);
+	star1->addBehavior<Star>()->set(5, 1);
+	GameEntity *star2 = new GameEntity(0, 0);
+	star2->addBehavior<Star>()->set(10, 2);
+	GameEntity *star3 = new GameEntity(0, 0);
+	star3->addBehavior<Star>()->set(15, 3);
+	GameEntity *star4 = new GameEntity(0, 0);
+	star4->addBehavior<Star>()->set(25, 1);
+	GameEntity *star5 = new GameEntity(0, 0);
+	star5->addBehavior<Star>()->set(30, 4);
+
+	scene.addEntity(star1);
+	scene.addEntity(star2);
+	scene.addEntity(star3);
+	scene.addEntity(star4);
+	scene.addEntity(star5);
 
 	scene.addEntity(a);
 	scene.addEntity(interface);
-	scene.addEntity(background);
 
 	scene.start();
 	while(scene.isActive())

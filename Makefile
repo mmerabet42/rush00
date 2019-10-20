@@ -3,10 +3,11 @@ CFLAGS = -Wall -Wextra -Werror
 
 NAME = ft_retro
 
-_SOURCES = GameEntity.cpp Point.cpp Behavior.cpp Scene.cpp main.cpp
+_SOURCES = GameEntity.cpp Point.cpp Behavior.cpp Scene.cpp main.cpp Star.cpp
 SOURCES = $(addprefix srcs/,$(_SOURCES))
 
-_INCLUDES = LinkedList.hpp List.hpp Pair.hpp GameEntity.hpp Point.hpp
+_INCLUDES = LinkedList.hpp List.hpp Pair.hpp GameEntity.hpp Point.hpp \
+			Star.hpp Scene.hpp CanonicalForm.hpp Behavior.hpp
 INCLUDES = $(addprefix incs/,$(_INCLUDES))
 
 OBJECTS = $(SOURCES:.cpp=.o)
