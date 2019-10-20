@@ -1,6 +1,6 @@
 #include "Behavior.hpp"
 #include <cstddef>
-#define nullptr NULL
+
 Behavior::Behavior()
 	: _entity(nullptr)
 {}

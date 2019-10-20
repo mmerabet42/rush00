@@ -48,8 +48,8 @@ public:
 
 	void update();
 
-	virtual Point *getPoints() const = 0;
-	virtual int getPointsSize() const = 0;
+	virtual Point *getPoints() const { return nullptr; };
+	virtual int getPointsSize() const { return 0; };
 
 private:
 	template <typename T>

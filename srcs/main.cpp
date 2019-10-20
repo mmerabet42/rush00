@@ -8,48 +8,16 @@
 #include "Behavior.hpp"
 #include "Scene.hpp"
 
-class A : public GameEntity
-{
-public:
-	A(const int &p_x, const int &p_y)
-		: GameEntity(p_x, p_y)
-	{}
-
-	Point *getPoints() const
-	{
-		static Point ps[] = {
-			Point(1, 1, '/'),	Point(0, 1, '-'),	Point(-1, 1, '\\'),
-			Point(1, 0, '-'),	Point(0, 0, '-'),	Point(-1, 0, '-'),
-      Point(0, 2, '>'), Point(0, -2, '3'), Point(0, -3, '~'),
-			Point(1, -1, '\\'), Point(0, -1, '-'),	Point(-1, -1, '/'),
-		  Point(-2, 1, '/'), Point(-2, 2, '-'), Point(2, 1, '\\'),
-      Point(2, 2, '-'),
-		};
-		return ps;
-	}
-	int getPointsSize() const
-	{
-		return 16;
-	}
+// THE PLAYER SHAPE
+static const Point g_playerPoints[] = {
+	Point(1, 1, '/'),	Point(0, 1, '-'),	Point(-1, 1, '\\'),
+	Point(1, 0, '-'),	Point(0, 0, '-'),	Point(-1, 0, '-'),
+	Point(0, 2, '>'), Point(0, -2, '3'), Point(0, -3, '~'),
+	Point(1, -1, '\\'), Point(0, -1, '-'),	Point(-1, -1, '/'),
+	Point(-2, 1, '/'), Point(-2, 2, '-'), Point(2, 1, '\\'),
+	Point(2, 2, '-'),
 };
-
-class EmptyGameEntity : public GameEntity
-{
-public:
-	EmptyGameEntity(const int &p_x, const int &p_y)
-		: GameEntity(p_x, p_y)
-	{}
-
-	Point *getPoints() const
-	{
-		return nullptr;
-	}
-
-	int getPointsSize() const
-	{
-		return 0;
-	}
-};
+static const int g_playerPointsSize = 16;
 
 /*******************************************************************************/
 
@@ -67,35 +35,62 @@ public:
   }
 }
 }
-*/
+
 void DrawHero (A a)
 {
   for(int i = 0; i < a.getPointsSize() ; i++)
   {
     mvaddch(a.getPointX(i), a.getPointY(i), a.getPointSymb(i));
   }
-}
+}*/
 // THIS ^ WOULD BECOME THIS v
 class RenderBehavior: public Behavior
 {
 public:
 	void update()
 	{
-		for (int i = 0; i < entity()->getPointsSize(); ++i)
-			mvaddch(entity()->getPointX(i), entity()->getPointY(i), entity()->getPointSymb(i));
+		for (int i = 0; i < this->_pointsSize; ++i)
+		{
+			mvaddch(entity()->x() + this->_points[i].x(),
+					entity()->y() + this->_points[i].y(),
+					this->_points[i].c());
+		}
 	}
+
+	void setPoints(const Point *p_points, const int &p_pointsSize)
+	{
+		this->_points = p_points;
+		this->_pointsSize = p_pointsSize;
+	}
+
+	bool collidesWith(const RenderBehavior *p_other) const
+	{
+		for (int i = 0; i < this->_pointsSize; ++i)
+			for (int j = 0; j < p_other._pointsSize; ++j)
+				if (entity()->x() + this->_points[i].x() == p_other.entity()->x() + p_other._points[i].x()
+						|| entity()->y() + this->_points[i].y() == p_other.entity()->y() + p_other._points[i].y())
+					return true;
+		return false;
+	}
+
+private:
+	const Point *_points;
+	int _pointsSize;
 };
 
 class InputBehavior: public Behavior
 {
 public:
+	InputBehavior()
+	{}
+
 	void update()
 	{
 		char c = getch();
 		if('a' == c)
-			entity()->setY(entity()->y() - 2);
+			entity()->setY(entity()->y() - speed);
 		if('d' == c)
-			entity()->setY(entity()->y() + 2);
+			entity()->setY(entity()->y() + speed);
 		if('w' == c)
 			entity()->setX(entity()->x() - 2);
 		if('s' == c)
@@ -108,7 +103,7 @@ class InterfaceBehavior: public Behavior
 public:
 	void update()
 	{
-		mvprintw(entity()->y(), entity()->x(), "Score : %d", 150);          // you use it like printf
+		mvprintw(entity()->y(), entity()->x(), "Score : %d", 150); // you use it like printf
 		mvprintw(entity()->y() + 1, entity()->x(), "lives : %d", 3);
 	}
 };
@@ -119,7 +114,7 @@ void EnemySpawn()
 
 }
 
-*/
+
 void Interface()
 {
 //  int score = 150;
@@ -127,7 +122,7 @@ void Interface()
   mvprintw( 2, 2, "Score : 150");          // NEED ITOA
   mvprintw( 3, 2, "lives : 3");
 }
-
+*/
 void Update(Scene &scene)
 {
   clear();
@@ -162,11 +157,12 @@ int main(void)
 // EXAMPLE:
 	Scene scene;
 
-	A *a = new A(10, 10);
+	GameEntity *a = new GameEntity(10, 10);
 	a->addBehavior<InputBehavior>(); // ONLY THE PLAYER(S) WILL HAVE THIS BEHAVIOR
-	a->addBehavior<RenderBehavior>(); // EVERY ENTITY WILL HAVE THIS ONE
+	a->addBehavior<RenderBehavior>()
+		->setPoints(g_playerPoints, g_playerPointsSize); // EVERY ENTITY WILL HAVE THIS ONE
 
-	EmptyGameEntity *interface = new EmptyGameEntity(2, 2);
+	GameEntity *interface = new GameEntity(2, 2);
 	interface->addBehavior<InterfaceBehavior>();
 
 	scene.addEntity(a);
