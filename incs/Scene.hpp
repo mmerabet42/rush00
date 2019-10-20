@@ -4,7 +4,8 @@
 # include "List.hpp"
 # include "GameEntity.hpp"
 
-typedef List<List<GameEntity *>::iterator> DestroyQueue;
+typedef Pair<std::string, GameEntity *> EntityPair;
+typedef List<List<EntityPair>::iterator> DestroyQueue;
 
 class Scene
 {
@@ -15,7 +16,7 @@ public:
 	Scene(const Scene &p_scene);
 	Scene &operator=(const Scene &p_scene);
 
-	void addEntity(GameEntity *p_entity);
+	void addEntity(const std::string &p_name, GameEntity *p_entity);
 	void destroy(GameEntity *p_entity);
 
 	void start();
@@ -24,10 +25,11 @@ public:
 	bool isActive() const;
 	void setUnactive();
 
-	List<GameEntity *> entities() const;
+	const List<EntityPair> &entities() const;
+	GameEntity *getEntity(const std::string &p_name);
 
 private:
-	List<GameEntity *> _entities;
+	List<EntityPair> _entities;
 	DestroyQueue _destroyQueue;
 
 	bool _isActive;

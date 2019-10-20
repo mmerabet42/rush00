@@ -7,8 +7,8 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-	for (List<GameEntity *>::iterator it = this->_entities.begin(); it != this->_entities.end(); it = it->next())
-		delete it->value();
+	for (List<EntityPair>::iterator it = this->_entities.begin(); it != this->_entities.end(); it = it->next())
+		delete it->value().b();
 }
 
 Scene::Scene(const Scene &p_scene)
@@ -22,24 +22,25 @@ Scene &Scene::operator=(const Scene &p_scene)
 	return *this;
 }
 
-void Scene::addEntity(GameEntity *p_entity)
+void Scene::addEntity(const std::string &p_name, GameEntity *p_entity)
 {
 	if (!p_entity)
 		return;
-	for (List<GameEntity *>::iterator it = this->_entities.begin(); it != this->_entities.end(); it = it->next())
-		if (it->value() == p_entity)
+	for (List<EntityPair>::iterator it = this->_entities.begin(); it != this->_entities.end(); it = it->next())
+		if (it->value().a() == p_name || it->value().b() == p_entity)
 			return;
-	this->_entities.push(p_entity);
+	this->_entities.push(EntityPair(p_name, p_entity));
 	p_entity->setScene(this);
+	p_entity->setName(p_name);
 }
 
 void Scene::destroy(GameEntity *p_entity)
 {
 	if (!p_entity)
 		return;
-	List<GameEntity *>::iterator it;
+	List<EntityPair>::iterator it;
 	for (it = this->_entities.begin(); it != this->_entities.end(); it = it->next())
-		if (it->value() == p_entity)
+		if (it->value().b() == p_entity)
 			break;
 	if (it == this->_entities.end())
 		return;
@@ -60,11 +61,11 @@ void Scene::update()
 	clear();
 	timeout(1);
 
-	for (List<GameEntity *>::iterator it = this->_entities.begin(); it != this->_entities.end(); it = it->next())
-		it->value()->update();
+	for (List<EntityPair>::iterator it = this->_entities.begin(); it != this->_entities.end(); it = it->next())
+		it->value().b()->update();
 	for (DestroyQueue::iterator it = this->_destroyQueue.begin(); it != this->_destroyQueue.end(); it = it->next())
 	{
-		delete it->value()->value();
+		delete it->value()->value().b();
 		this->_entities.erase(it->value());
 	}
 	this->_destroyQueue.clear();
@@ -85,7 +86,15 @@ void Scene::setUnactive()
 	this->_isActive = false;
 }
 
-List<GameEntity *> Scene::entities() const
+const List<EntityPair> &Scene::entities() const
 {
 	return this->_entities;
+}
+
+GameEntity *Scene::getEntity(const std::string &p_name)
+{
+	for (List<EntityPair>::iterator it = this->_entities.begin(); it != this->_entities.end(); it = it->next())
+		if (it->value().a() == p_name)
+			return it->value().b();
+	return nullptr;
 }

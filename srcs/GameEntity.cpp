@@ -46,6 +46,16 @@ void GameEntity::setScene(Scene *p_scene)
 	this->_scene = p_scene;
 }
 
+std::string GameEntity::name() const
+{
+	return this->_name;
+}
+
+void GameEntity::setName(const std::string &p_name)
+{
+	this->_name = p_name;
+}
+
 void GameEntity::setPos(const int &p_x, const int &p_y)
 {
 	this->_x = p_x;

@@ -9,6 +9,7 @@
 #include "Scene.hpp"
 #include "CanonicalForm.hpp"
 #include "Star.hpp"
+#include "utils.hpp"
 
 /*******************************************************************************/
 
@@ -117,8 +118,12 @@ public:
 	InputBehavior()
 	{}
 
+	void start()
+	{}
+
 	void update()
 	{
+		static int i = 0;
 		char c = getch();
 		if('a' == c)
 			entity()->setY(entity()->y() - 2);
@@ -132,13 +137,13 @@ public:
 		if (c == 'h')
 			entity()->scene()->setUnactive();
 
-		if (c == 'o')
+		if (c == 'o' && entity()->scene()->getEntity("Player") == entity())
 		{
 			GameEntity *dot = new GameEntity(entity()->x(), entity()->y());
 			dot->addBehavior<DirectionalBehavior>()->velocity = (rand() % 4) + 10;
 			dot->addBehavior<RenderBehavior>()->setPoints(g_points, g_pointsSize);
 
-			entity()->scene()->addEntity(dot);
+			entity()->scene()->addEntity("dot" + toString(i++), dot);
 		}
 	}
 
@@ -148,11 +153,16 @@ public:
 class InterfaceBehavior: public Behavior
 {
 public:
+	int i;
+	int lives;
+	int score;
+
 	void update()
 	{
-		mvprintw(entity()->y(), entity()->x(), "Score : %d", 150); // you use it like printf
-		mvprintw(entity()->y() + 1, entity()->x(), "lives : %d", 3);
+		mvprintw(entity()->y(), entity()->x(), "Score : %d", score);
+		mvprintw(entity()->y() + 1, entity()->x(), "lives : %d", lives);
 		mvprintw(entity()->y() + 2, entity()->x(), "entities : %d", entity()->scene()->entities().size());
+		mvprintw(entity()->y() + 3, entity()->x(), "last : %s", entity()->scene()->entities().last()->value().b()->name().c_str());
 	}
 };
 
@@ -216,14 +226,14 @@ int main(void)
 	GameEntity *star5 = new GameEntity(0, 0);
 	star5->addBehavior<Star>()->set(30, 4);
 
-	scene.addEntity(star1);
-	scene.addEntity(star2);
-	scene.addEntity(star3);
-	scene.addEntity(star4);
-	scene.addEntity(star5);
+	scene.addEntity("s1", star1);
+	scene.addEntity("s2", star2);
+	scene.addEntity("s3", star3);
+	scene.addEntity("s4", star4);
+	scene.addEntity("s5", star5);
 
-	scene.addEntity(a);
-	scene.addEntity(interface);
+	scene.addEntity("Player", a);
+	scene.addEntity("interface", interface);
 
 	scene.start();
 	while(scene.isActive())

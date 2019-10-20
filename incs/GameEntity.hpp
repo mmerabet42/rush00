@@ -30,6 +30,9 @@ public:
 	Scene *scene() const;
 	void setScene(Scene *p_scene); 
 
+	std::string name() const;
+	void setName(const std::string &p_name);
+
 	void setPos(const int &p_x, const int &p_y);
 	void setX(const int &p_x);
 	void setY(const int &p_y);
@@ -54,6 +57,7 @@ protected:
 	List<BehaviorPair> _behaviors;
 
 	Scene *_scene;
+	std::string _name;
 };
 
 template <typename T_Behavior>

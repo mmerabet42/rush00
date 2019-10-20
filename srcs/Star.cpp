@@ -1,6 +1,10 @@
 #include "Star.hpp"
 #include <ncurses.h>
 
+void Star::start()
+{
+	
+}
 
 void Star::update()
 {
