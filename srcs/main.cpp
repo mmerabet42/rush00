@@ -66,9 +66,9 @@ public:
 	bool collidesWith(const RenderBehavior *p_other) const
 	{
 		for (int i = 0; i < this->_pointsSize; ++i)
-			for (int j = 0; j < p_other._pointsSize; ++j)
-				if (entity()->x() + this->_points[i].x() == p_other.entity()->x() + p_other._points[i].x()
-						|| entity()->y() + this->_points[i].y() == p_other.entity()->y() + p_other._points[i].y())
+			for (int j = 0; j < p_other->_pointsSize; ++j)
+				if (entity()->x() + this->_points[i].x() == p_other->entity()->x() + p_other->_points[i].x()
+						|| entity()->y() + this->_points[i].y() == p_other->entity()->y() + p_other->_points[i].y())
 					return true;
 		return false;
 	}
@@ -88,9 +88,9 @@ public:
 	{
 		char c = getch();
 		if('a' == c)
-			entity()->setY(entity()->y() - speed);
+			entity()->setY(entity()->y() - 2);
 		if('d' == c)
-			entity()->setY(entity()->y() + speed);
+			entity()->setY(entity()->y() + 2);
 		if('w' == c)
 			entity()->setX(entity()->x() - 2);
 		if('s' == c)
