@@ -1,14 +1,19 @@
 COMPILER = clang++
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -g3 -fsanitize=address
 
 NAME = ft_retro
 
 _SOURCES =	GameEntity.cpp Point.cpp Behavior.cpp Scene.cpp main.cpp Star.cpp \
-			utils.cpp
+			utils.cpp InputBehavior.cpp DirectionalBehavior.cpp RenderBehavior.cpp \
+			InterfaceBehavior.cpp Player.cpp KillPlayer.cpp
+
 SOURCES = $(addprefix srcs/,$(_SOURCES))
 
 _INCLUDES = LinkedList.hpp List.hpp Pair.hpp GameEntity.hpp Point.hpp \
-			Star.hpp Scene.hpp CanonicalForm.hpp Behavior.hpp utils.hpp
+			Star.hpp Scene.hpp CanonicalForm.hpp Behavior.hpp utils.hpp \
+			InputBehavior.hpp DirectionalBehavior.hpp RenderBehavior.hpp \
+			InterfaceBehavior.hpp Player.hpp KillPlayer.hpp
+
 INCLUDES = $(addprefix incs/,$(_INCLUDES))
 
 OBJECTS = $(SOURCES:.cpp=.o)

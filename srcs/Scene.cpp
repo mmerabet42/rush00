@@ -1,5 +1,6 @@
 #include "Scene.hpp"
 #include <ncurses.h>
+#include "RenderBehavior.hpp"
 
 Scene::Scene()
 	: _isActive(false)
@@ -44,6 +45,8 @@ void Scene::destroy(GameEntity *p_entity)
 			break;
 	if (it == this->_entities.end())
 		return;
+	if (p_entity == this->_player)
+		this->_player = nullptr;
 	this->_destroyQueue.push(it);
 }
 
@@ -54,6 +57,9 @@ void Scene::start()
 	noecho();
 
 	this->_isActive = true;
+
+	for (List<EntityPair>::iterator it = this->_entities.begin(); it != this->_entities.end(); it = it->next())
+		it->value().b()->start();
 }
 
 void Scene::update()
@@ -97,4 +103,15 @@ GameEntity *Scene::getEntity(const std::string &p_name)
 		if (it->value().a() == p_name)
 			return it->value().b();
 	return nullptr;
+}
+
+void Scene::setPlayer(Player *p_player)
+{
+	this->_player = p_player;
+	this->addEntity("Player", p_player);
+}
+
+Player *Scene::player() const
+{
+	return this->_player;
 }

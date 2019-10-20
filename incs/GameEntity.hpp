@@ -41,7 +41,7 @@ public:
 	T_Behavior *addBehavior();
 
 	template <typename T_Behavior>
-	T_Behavior *getBehavior() const;
+	T_Behavior *getBehavior();
 
 	void start();
 	void update();
@@ -78,13 +78,13 @@ T_Behavior *GameEntity::addBehavior()
 
 
 template <typename T_Behavior>
-T_Behavior *GameEntity::getBehavior() const
+T_Behavior *GameEntity::getBehavior()
 {
 	static const std::type_info *t = this->getTypeInfo<T_Behavior>();
 
-	for (List<BehaviorPair>::iterator it = this->_behaviors.begin(); it != this->_behaviors.end(); it = it->next())
+	for (List<BehaviorPair>::const_iterator it = this->_behaviors.begin(); it != this->_behaviors.end(); it = it->next())
 		if (it->value().a() == t)
-			return it->value().b();
+			return dynamic_cast<T_Behavior *>(it->value().b());
 	return nullptr;
 }
 
