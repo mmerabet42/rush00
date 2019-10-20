@@ -7,6 +7,7 @@
 #include "GameEntity.hpp"
 #include "Behavior.hpp"
 #include "Scene.hpp"
+#include "Star.hpp"
 
 // THE PLAYER SHAPE
 static const Point g_playerPoints[] = {
@@ -125,7 +126,7 @@ void Interface()
 */
 void Update(Scene &scene)
 {
-  clear();
+  //clear();
 /*************************/
 //  DrawHero(a);
 	scene.update();
@@ -138,11 +139,9 @@ void Update(Scene &scene)
   noecho();
 }
 
-void Background(int i, int j, int h)
+void initBackground()
 {
-  mvaddch(10, COLS - i, '*');
-  mvaddch(40, COLS - j, '*');                   //NEED RANDOM SPAWN
-  mvaddch(20, COLS - h, '*');
+
 }
 
 
@@ -150,12 +149,9 @@ int main(void)
 {
     initscr();
     curs_set(FALSE);
-    int i = 0;
-    int j = 0;
-    int h = 0;
-
-// EXAMPLE:
 	Scene scene;
+  time_t ptr;
+	std::srand(std::time(&ptr));
 
 	GameEntity *a = new GameEntity(10, 10);
 	a->addBehavior<InputBehavior>(); // ONLY THE PLAYER(S) WILL HAVE THIS BEHAVIOR
@@ -165,27 +161,34 @@ int main(void)
 	GameEntity *interface = new GameEntity(2, 2);
 	interface->addBehavior<InterfaceBehavior>();
 
+	GameEntity *star1 = new GameEntity(0, 0);
+	star1->addBehavior<Star>()->set(5, 1);
+	GameEntity *star2 = new GameEntity(0, 0);
+	star2->addBehavior<Star>()->set(10, 2);
+	GameEntity *star3 = new GameEntity(0, 0);
+	star3->addBehavior<Star>()->set(15, 3);
+	GameEntity *star4 = new GameEntity(0, 0);
+	star4->addBehavior<Star>()->set(25, 1);
+	GameEntity *star5 = new GameEntity(0, 0);
+	star5->addBehavior<Star>()->set(30, 4);
+
+	scene.addEntity(star1);
+	scene.addEntity(star2);
+	scene.addEntity(star3);
+	scene.addEntity(star4);
+	scene.addEntity(star5);
+
 	scene.addEntity(a);
 	scene.addEntity(interface);
+
+	initBackground();
 
     noecho();
     while(1)                  //need isAlive
     {
       clear();
-      /***************/
-      i++;
-      if ( i > COLS )
-        i = 0;
-      j += 2;
-      if ( j > COLS )           //Background
-        j = 0;
-      h += 3;
-      if ( h > COLS )
-        h = 0;
-      /*****************/
       timeout(1);
       Update(scene);
-      Background(i,j,h);
       refresh();
       usleep(20000);
     }
