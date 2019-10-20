@@ -8,7 +8,7 @@ void Star::start()
 
 void Star::update()
 {
-  mvaddch(hauteur, COLS - reset, '*');
+  mvaddch(hauteur, COLS - reset, '+');
   reset += speed;
   if (reset > COLS)
   {

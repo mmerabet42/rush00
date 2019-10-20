@@ -7,12 +7,17 @@
 class DirectionalBehavior : public Behavior
 {
 public:
-	void start();
+	DirectionalBehavior();
+
 	void update();
 
-	int velocity;
+	void set(const int &p_yVelocity, const int &p_xVelocity, const bool &p_deleteAtExit);
 
-	CANONICALFORM(DirectionalBehavior)
+	CANONICALFORM2(DirectionalBehavior)
+
+	bool deleteAtExit;
+	int yVelocity;
+	int xVelocity;
 };
 
 #endif // DIRECTIONALBEHAVIOR_HPP

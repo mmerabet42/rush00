@@ -15,5 +15,5 @@ Player::Player(const int &p_x, const int &p_y)
 {
 	this->_inputBehavior = this->addBehavior<InputBehavior>();
 	this->_renderBehavior = this->addBehavior<RenderBehavior>();
-	this->_renderBehavior->set(g_playerPoints, TAB_SIZE(g_playerPoints));
+	this->_renderBehavior->set(g_playerPoints, TAB_SIZE(g_playerPoints), 6);
 }

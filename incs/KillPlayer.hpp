@@ -11,6 +11,10 @@ public:
 	void start();
 	void update();
 
+	void set(const int &p_score);
+
+	int score;
+
 	CANONICALFORM(KillPlayer)
 private:
 	RenderBehavior *_renderBehavior;

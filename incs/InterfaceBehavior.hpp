@@ -13,7 +13,7 @@ public:
 	CANONICALFORM(InterfaceBehavior)
 
 	int lives;
-	int scores;
+	int score;
 };
 
 #endif // INTERFACEBEHAVIOR_HPP

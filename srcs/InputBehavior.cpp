@@ -5,6 +5,7 @@
 #include "DirectionalBehavior.hpp"
 #include "RenderBehavior.hpp"
 #include "utils.hpp"
+#include "KillEnemy.hpp"
 
 InputBehavior::InputBehavior()
 {
@@ -20,6 +21,7 @@ void InputBehavior::update()
 	static int i = 0;
 
 	char c = getch();
+
 	if(c == this->_left)
 		entity()->setY(entity()->y() - 2);
 	if(c == this->_right)
@@ -29,16 +31,37 @@ void InputBehavior::update()
 	if(c == this->_down)
 		entity()->setX(entity()->x() + 2);
 
+	if (entity()->x() > LINES - 2)
+		entity()->setX(LINES - 2);
+	if (entity()->x() < 2)
+		entity()->setX(2);
+	if (entity()->y() > COLS - 2)
+		entity()->setY(COLS - 2);
+	if (entity()->y() < 2)
+		entity()->setY(2);
+
 	if (c == 'h')
 		entity()->scene()->setUnactive();
 
-	if (c == 'o' && entity()->scene()->getEntity("Player") == entity())
+	if (c == 'o')
 	{
-		GameEntity *dot = new GameEntity(entity()->x(), entity()->y());
-		dot->addBehavior<DirectionalBehavior>()->velocity = (rand() % 4) + 10;
-		dot->addBehavior<RenderBehavior>()->set(g_points, TAB_SIZE(g_points));
+		int speed = (rand() % 2) + 2;
+
+		GameEntity *dot = new GameEntity(entity()->x() - 2, entity()->y());
+		dot->addBehavior<DirectionalBehavior>()->set(speed, 0, true);
+		dot->addBehavior<KillEnemy>();
+		dot->addBehavior<RenderBehavior>()->set(g_points, TAB_SIZE(g_points),
+												entity()->getBehavior<RenderBehavior>()->colorIndex());
 
 		entity()->scene()->addEntity("dot" + toString(i++), dot);
+		
+		GameEntity *dot2 = new GameEntity(entity()->x() + 2, entity()->y());
+		dot2->addBehavior<DirectionalBehavior>()->set(speed, 0, true);
+		dot2->addBehavior<KillEnemy>();
+		dot2->addBehavior<RenderBehavior>()->set(g_points, TAB_SIZE(g_points),
+												 entity()->getBehavior<RenderBehavior>()->colorIndex());
+
+		entity()->scene()->addEntity("dot" + toString(i++), dot2);
 	}
 }
 
