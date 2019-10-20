@@ -11,6 +11,9 @@
 #include "Star.hpp"
 #include "utils.hpp"
 
+void boucle(Scene *scene);
+void Gameover();
+
 /*******************************************************************************/
 
 /*void DrawEnemy (Enemy enemy, Hero perso)
@@ -53,7 +56,47 @@ static const Point g_playerPoints[] = {
 	Point(-2, 1, '/'), Point(-2, 2, '-'), Point(2, 1, '\\'),
 	Point(2, 2, '-'),
 };
-//static const int g_playerPointsSize = 16;
+
+/*
+static const Point g_playerPoints[] = {
+	Point(-2, -1, '/'),	Point(-2, 0, '-'),	Point(-2, 1, '\\'),
+	Point(-1, -1, '|'),	Point(-1, 0, ' '),	Point(-1, 1, '|'),
+	Point(0, -1, '|'), Point(0, 0, ' '), Point(0, 1, '|'),
+	Point(1, -1, '|'), Point(1, 0, ' '),	Point(1, 1, '|'),
+	Point(2, -1, '\\'), Point(2, 0, '-'), Point(2, 1, '/'),
+}; //cube
+*///static const int g_playerPointsSize = 16;
+/*static const Point g_playerPoints[] = {
+	Point(-2, -2, '/'),Point(-2, -1, '-'),	Point(2, 0, '-'),	Point(-2, 1, '-'),	Point(-2, 2, '\\'),
+	Point(-1, -2, '|'),Point(-1, -1, ' '),	Point(1, 0, ' '),	Point(-1, 1, 'o'),	Point(-1, 2, '|'),
+	Point(0, -2, '|'),Point(0, -1, ' '), Point(0, 0, ' '), Point(0, 1, ' '),	Point(-0, 2, '|'),
+	Point(1, -2, '|'),Point(1, -1, ' '), Point(-1, 0, ' '),	Point(1, 1, ' '),	Point(1, 2, '|'),
+	Point(2, -2, '\\'),Point(2, -1, '-'), Point(-2, 0, '-'), Point(2, 1, '-'),	Point(2, 2, '/'),
+}; //asteroide
+*/
+/*
+static const Point g_playerPoints[] = {
+	Point(-2, -1, ' '),	Point(-2, 0, '/'),	Point(-2, 1, ' '), Point(-2, 2, ' '),
+	Point(-1, -1, '/'),	Point(-1, 0, '-'),	Point(-1, 1, '-'), Point(-1, 2, '/'),
+	Point(0, -1, '\\'), Point(0, 0, '-'), Point(0, 1, '-'), Point(0, 2, '\\'),
+	Point(1, -1, ' '), Point(1, 0, '\\'),	Point(1, 1, ' '), Point(1, 2, ' ')
+};*/
+/*
+static const Point g_playerPoints[] = {
+	Point(-2, -1, '\\'),	Point(-2, 0, '\\'),	Point(-2, 1, ' '),
+	Point(-1, -1, '/'),	Point(-1, 0, '\\'),	Point(-1, 1, '\\'),
+	Point(0, -1, '<'), Point(0, 0, '-'), Point(0, 1, '-'), Point(0, 2, '-'),
+	Point(1, -1, '\\'), Point(1, 0, 'o'),	Point(1, 1, '-'), Point(1, 2, 'o')
+};
+*/
+/*
+static const Point g_playerPoints[] =
+{
+	Point(-1, -1, '/'),	Point(-1, 0, '-'),	Point(-1, 1, '\\'),
+	Point(0, -1, '|'), Point(0, 0, '+'), Point(0, 1, '|'),
+	Point(1, -1, '\\'), Point(1, 0, '-'),	Point(1, 1, '/'),
+};
+*/
 
 static const Point g_points[] = {
 	Point(0, 0, '*')
@@ -81,12 +124,16 @@ class RenderBehavior: public Behavior
 public:
 	void update()
 	{
+		start_color();
+		init_pair(1, 4, 0);
+		attron(COLOR_PAIR(1));
 		for (int i = 0; i < this->_pointsSize; ++i)
 		{
 			mvaddch(entity()->x() + this->_points[i].x(),
 					entity()->y() + this->_points[i].y(),
 					this->_points[i].c());
 		}
+		attroff(COLOR_PAIR(1));
 	}
 
 	void setPoints(const Point *p_points, const int &p_pointsSize)
@@ -124,27 +171,30 @@ public:
 	void update()
 	{
 		static int i = 0;
-		char c = getch();
-		if('a' == c)
-			entity()->setY(entity()->y() - 2);
-		if('d' == c)
-			entity()->setY(entity()->y() + 2);
-		if('w' == c)
-			entity()->setX(entity()->x() - 2);
-		if('s' == c)
-			entity()->setX(entity()->x() + 2);
+		char c;
+		c = getch();
 
-		if (c == 'h')
-			entity()->scene()->setUnactive();
+			if('a' == c)
+			{
+				entity()->setY(entity()->y() - 2);
+			}
+			if('d' == c)
+				entity()->setY(entity()->y() + 2);
+			if('w' == c)
+				entity()->setX(entity()->x() - 2);
+			if('s' == c)
+				entity()->setX(entity()->x() + 2);
+			if (c == 'h')
+				entity()->scene()->setUnactive();
 
-		if (c == 'o' && entity()->scene()->getEntity("Player") == entity())
-		{
-			GameEntity *dot = new GameEntity(entity()->x(), entity()->y());
-			dot->addBehavior<DirectionalBehavior>()->velocity = (rand() % 4) + 10;
-			dot->addBehavior<RenderBehavior>()->setPoints(g_points, TAB_SIZE(g_points));
+			if (c == 'o' && entity()->scene()->getEntity("Player") == entity())
+			{
+				GameEntity *dot = new GameEntity(entity()->x(), entity()->y());
+				dot->addBehavior<DirectionalBehavior>()->velocity = (rand() % 4) + 10;
+				dot->addBehavior<RenderBehavior>()->setPoints(g_points, TAB_SIZE(g_points));
 
-			entity()->scene()->addEntity("dot" + toString(i++), dot);
-		}
+				entity()->scene()->addEntity("dot" + toString(i++), dot);
+			}
 	}
 
 	CANONICALFORM2(InputBehavior)
@@ -166,46 +216,10 @@ public:
 	}
 };
 
-class BackgroundBehavior : public Behavior
+
+void initboucle()
 {
-	int i;
-	int j;
-	int h;
-
-public:
-	void start()
-	{
-		i = 0;
-		j = 0;
-		h = 0;
-	}
-
-	void update()
-	{
-		i++;
-		if ( i > COLS )
-			i = 0;
-		j += 2;
-		if ( j > COLS )           //Background
-			j = 0;
-		h += 3;
-		if ( h > COLS )
-			h = 0;
-
-		mvaddch(10, COLS - i, '*');
-		mvaddch(40, COLS - j, '*');                   //NEED RANDOM SPAWN
-		mvaddch(20, COLS - h, '*');
-	}
-
-	CANONICALFORM(BackgroundBehavior)
-};
-
-int main(void)
-{
-// EXAMPLE:
 	Scene scene;
-	time_t ptr;
-	std::srand(std::time(&ptr));
 
 	GameEntity *a = new GameEntity(10, 10);
 	a->addBehavior<InputBehavior>(); // ONLY THE PLAYER(S) WILL HAVE THIS BEHAVIOR
@@ -236,10 +250,48 @@ int main(void)
 	scene.addEntity("interface", interface);
 
 	scene.start();
-	while(scene.isActive())
+	boucle(&scene);
+	Gameover();
+}
+
+void boucle(Scene *scene)
+{
+	while(scene->isActive())
 	{
-		scene.update();
+		scene->update();
 		usleep(20000);
 	}
+}
+
+	void Gameover()
+	{
+		while (1)
+		{
+			mvprintw(LINES/2 - 1, COLS/2, "%s\n", "------------------------");
+			mvprintw(LINES/2, COLS/2, "%s\n", "GAME OVER");
+			mvprintw(LINES/2 + 1, COLS/2, "%s\n", "Press 'R' to replay");
+			mvprintw(LINES/2 + 2 , COLS/2, "%s\n", "Press 'Q' to exit");
+			mvprintw(LINES/2 + 3, COLS/2, "%s\n", "------------------------");
+			char c = getch();
+			if(c == 'r')
+			{
+				initboucle();
+			}
+			if(c == 'q')
+			{
+					endwin();
+					break;
+			}
+			refresh();
+		}
+	}
+
+
+
+int main(void)
+{
+	time_t ptr;
+	std::srand(std::time(&ptr));
+	initboucle();
 	return 0;
 }
