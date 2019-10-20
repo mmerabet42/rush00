@@ -1,5 +1,5 @@
 COMPILER = clang++
-CFLAGS = -Wall -Wextra -Werror -g3 -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror
 
 NAME = ft_retro
 
