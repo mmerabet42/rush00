@@ -28,3 +28,9 @@ void Behavior::setEntity(GameEntity *p_entity)
 {
 	this->_entity = p_entity;
 }
+
+void Behavior::start()
+{}
+
+void Behavior::update()
+{}

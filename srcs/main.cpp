@@ -7,18 +7,7 @@
 #include "GameEntity.hpp"
 #include "Behavior.hpp"
 #include "Scene.hpp"
-
-// THE PLAYER SHAPE
-static const Point g_playerPoints[] = {
-	Point(1, 1, '/'),	Point(0, 1, '-'),	Point(-1, 1, '\\'),
-	Point(1, 0, '-'),	Point(0, 0, '-'),	Point(-1, 0, '-'),
-	Point(0, 2, '>'), Point(0, -2, '3'), Point(0, -3, '~'),
-	Point(1, -1, '\\'), Point(0, -1, '-'),	Point(-1, -1, '/'),
-	Point(-2, 1, '/'), Point(-2, 2, '-'), Point(2, 1, '\\'),
-	Point(2, 2, '-'),
-};
-static const int g_playerPointsSize = 16;
-
+#include "CanonicalForm.hpp"
 /*******************************************************************************/
 
 /*void DrawEnemy (Enemy enemy, Hero perso)
@@ -36,14 +25,54 @@ static const int g_playerPointsSize = 16;
 }
 }
 
-void DrawHero (A a)
+void Update(Scene &scene)
 {
-  for(int i = 0; i < a.getPointsSize() ; i++)
-  {
-    mvaddch(a.getPointX(i), a.getPointY(i), a.getPointSymb(i));
-  }
-}*/
-// THIS ^ WOULD BECOME THIS v
+  clear();
+************************
+//  DrawHero(a);
+	scene.update();
+  //EnemySpawn();                                 // RANDOM SPAWN Enemy
+//  for(int i = 0; i < nbrEnemy; i++)               //iteration pour actualier les deplacement/tir de chaque ennemy
+  //  UpdateEnemy(Enemy enemy[i], Hero perso );
+//  DrawEnemy();
+************************
+//  Interface();
+  noecho();
+}
+*/
+
+// THE PLAYER SHAPE
+static const Point g_playerPoints[] = {
+	Point(1, 1, '/'),	Point(0, 1, '-'),	Point(-1, 1, '\\'),
+	Point(1, 0, '-'),	Point(0, 0, '-'),	Point(-1, 0, '-'),
+	Point(0, 2, '>'), Point(0, -2, '3'), Point(0, -3, '~'),
+	Point(1, -1, '\\'), Point(0, -1, '-'),	Point(-1, -1, '/'),
+	Point(-2, 1, '/'), Point(-2, 2, '-'), Point(2, 1, '\\'),
+	Point(2, 2, '-'),
+};
+static const int g_playerPointsSize = 16;
+
+static const Point g_points[] = {
+	Point(0, 0, '*')
+};
+static const int g_pointsSize = 1;
+
+class DirectionalBehavior : public Behavior
+{
+public:
+	void start()
+	{
+		this->velocity = 0;
+	}
+
+	void update()
+	{
+		entity()->setY(entity()->y() + this->velocity);
+	}
+
+	int velocity;
+};
+
 class RenderBehavior: public Behavior
 {
 public:
@@ -73,6 +102,8 @@ public:
 		return false;
 	}
 
+	CANONICALFORM(RenderBehavior)
+
 private:
 	const Point *_points;
 	int _pointsSize;
@@ -95,7 +126,21 @@ public:
 			entity()->setX(entity()->x() - 2);
 		if('s' == c)
 			entity()->setX(entity()->x() + 2);
+
+		if (c == 'h')
+			entity()->scene()->setUnactive();
+
+		if (c == 'o')
+		{
+			GameEntity *dot = new GameEntity(entity()->x(), entity()->y());
+			dot->addBehavior<DirectionalBehavior>()->velocity = (rand() % 4) + 10;
+			dot->addBehavior<RenderBehavior>()->setPoints(g_points, g_pointsSize);
+
+			entity()->scene()->addEntity(dot);
+		}
 	}
+
+	CANONICALFORM2(InputBehavior)
 };
 
 class InterfaceBehavior: public Behavior
@@ -105,55 +150,46 @@ public:
 	{
 		mvprintw(entity()->y(), entity()->x(), "Score : %d", 150); // you use it like printf
 		mvprintw(entity()->y() + 1, entity()->x(), "lives : %d", 3);
+		mvprintw(entity()->y() + 2, entity()->x(), "entities : %d", entity()->scene()->entities().size());
 	}
 };
 
-/*
-void EnemySpawn()
+class BackgroundBehavior : public Behavior
 {
+	int i;
+	int j;
+	int h;
 
-}
+public:
+	void start()
+	{
+		i = 0;
+		j = 0;
+		h = 0;
+	}
 
+	void update()
+	{
+		i++;
+		if ( i > COLS )
+			i = 0;
+		j += 2;
+		if ( j > COLS )           //Background
+			j = 0;
+		h += 3;
+		if ( h > COLS )
+			h = 0;
 
-void Interface()
-{
-//  int score = 150;
-//  int lives = 3;
-  mvprintw( 2, 2, "Score : 150");          // NEED ITOA
-  mvprintw( 3, 2, "lives : 3");
-}
-*/
-void Update(Scene &scene)
-{
-  clear();
-/*************************/
-//  DrawHero(a);
-	scene.update();
-  //EnemySpawn();                                 // RANDOM SPAWN Enemy
-//  for(int i = 0; i < nbrEnemy; i++)               //iteration pour actualier les deplacement/tir de chaque ennemy
-  //  UpdateEnemy(Enemy enemy[i], Hero perso );
-//  DrawEnemy();
-/**************************/
-//  Interface();
-  noecho();
-}
+		mvaddch(10, COLS - i, '*');
+		mvaddch(40, COLS - j, '*');                   //NEED RANDOM SPAWN
+		mvaddch(20, COLS - h, '*');
+	}
 
-void Background(int i, int j, int h)
-{
-  mvaddch(10, COLS - i, '*');
-  mvaddch(40, COLS - j, '*');                   //NEED RANDOM SPAWN
-  mvaddch(20, COLS - h, '*');
-}
-
+	CANONICALFORM(BackgroundBehavior)
+};
 
 int main(void)
 {
-    initscr();
-    curs_set(FALSE);
-    int i = 0;
-    int j = 0;
-    int h = 0;
-
 // EXAMPLE:
 	Scene scene;
 
@@ -165,30 +201,18 @@ int main(void)
 	GameEntity *interface = new GameEntity(2, 2);
 	interface->addBehavior<InterfaceBehavior>();
 
+	GameEntity *background = new GameEntity(0, 0);
+	background->addBehavior<BackgroundBehavior>();
+
 	scene.addEntity(a);
 	scene.addEntity(interface);
+	scene.addEntity(background);
 
-    noecho();
-    while(1)                  //need isAlive
-    {
-      clear();
-      /***************/
-      i++;
-      if ( i > COLS )
-        i = 0;
-      j += 2;
-      if ( j > COLS )           //Background
-        j = 0;
-      h += 3;
-      if ( h > COLS )
-        h = 0;
-      /*****************/
-      timeout(1);
-      Update(scene);
-      Background(i,j,h);
-      refresh();
-      usleep(20000);
-    }
-    endwin();
-    return 0;
+	scene.start();
+	while(scene.isActive())
+	{
+		scene.update();
+		usleep(20000);
+	}
+	return 0;
 }

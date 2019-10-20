@@ -18,13 +18,19 @@ public:
 	void addEntity(GameEntity *p_entity);
 	void destroy(GameEntity *p_entity);
 
+	void start();
 	void update();
+
+	bool isActive() const;
+	void setUnactive();
 
 	List<GameEntity *> entities() const;
 
 private:
 	List<GameEntity *> _entities;
 	DestroyQueue _destroyQueue;
+
+	bool _isActive;
 };
 
 #endif // SCENE_HPP

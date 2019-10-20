@@ -17,7 +17,8 @@ public:
 	GameEntity *entity() const;
 	void setEntity(GameEntity *p_entity);
 
-	virtual void update() = 0;
+	virtual void start();
+	virtual void update();
 
 private:
 	GameEntity *_entity;

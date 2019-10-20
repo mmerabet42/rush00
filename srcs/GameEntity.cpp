@@ -62,28 +62,10 @@ void GameEntity::setY(const int &p_y)
 	this->_y = p_y;
 }
 
-int GameEntity::getPointX(const int &p_i) const
+void GameEntity::start()
 {
-	return this->_x + this->getPoints()[p_i].x();
-}
-
-int GameEntity::getPointY(const int &p_i) const
-{
-	return this->_y + this->getPoints()[p_i].y();
-}
-
-char GameEntity::getPointSymb(const int &p_i) const
-{
-	return this->getPoints()[p_i].c();
-}
-
-bool GameEntity::collidesWith(const GameEntity &p_entity) const
-{
-	for (int i = 0; i < this->getPointsSize(); ++i)
-		for (int j = 0; j < p_entity.getPointsSize(); ++j)
-			if (this->getPointX(i) == p_entity.getPointY(j) && this->getPointY(i) == p_entity.getPointY(j))
-				return true;
-	return false;
+	for (List<BehaviorPair>::iterator it = this->_behaviors.begin(); it != this->_behaviors.end(); it = it->next())
+		it->value().b()->start();
 }
 
 void GameEntity::update()

@@ -34,22 +34,14 @@ public:
 	void setX(const int &p_x);
 	void setY(const int &p_y);
 
-	int getPointX(const int &p_i) const;
-	int getPointY(const int &p_i) const;
-	char getPointSymb(const int &p_i) const;
-
-	bool collidesWith(const GameEntity &p_entity) const;
-
 	template <typename T_Behavior>
 	T_Behavior *addBehavior();
 
 	template <typename T_Behavior>
 	T_Behavior *getBehavior() const;
 
+	void start();
 	void update();
-
-	virtual Point *getPoints() const { return nullptr; };
-	virtual int getPointsSize() const { return 0; };
 
 private:
 	template <typename T>
