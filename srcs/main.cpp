@@ -53,12 +53,12 @@ static const Point g_playerPoints[] = {
 	Point(-2, 1, '/'), Point(-2, 2, '-'), Point(2, 1, '\\'),
 	Point(2, 2, '-'),
 };
-static const int g_playerPointsSize = 16;
+//static const int g_playerPointsSize = 16;
 
 static const Point g_points[] = {
 	Point(0, 0, '*')
 };
-static const int g_pointsSize = 1;
+//static const int g_pointsSize = 1;
 
 class DirectionalBehavior : public Behavior
 {
@@ -141,7 +141,7 @@ public:
 		{
 			GameEntity *dot = new GameEntity(entity()->x(), entity()->y());
 			dot->addBehavior<DirectionalBehavior>()->velocity = (rand() % 4) + 10;
-			dot->addBehavior<RenderBehavior>()->setPoints(g_points, g_pointsSize);
+			dot->addBehavior<RenderBehavior>()->setPoints(g_points, TAB_SIZE(g_points));
 
 			entity()->scene()->addEntity("dot" + toString(i++), dot);
 		}
@@ -210,7 +210,7 @@ int main(void)
 	GameEntity *a = new GameEntity(10, 10);
 	a->addBehavior<InputBehavior>(); // ONLY THE PLAYER(S) WILL HAVE THIS BEHAVIOR
 	a->addBehavior<RenderBehavior>()
-		->setPoints(g_playerPoints, g_playerPointsSize); // EVERY ENTITY WILL HAVE THIS ONE
+		->setPoints(g_playerPoints, TAB_SIZE(g_playerPoints)); // EVERY ENTITY WILL HAVE THIS ONE
 
 	GameEntity *interface = new GameEntity(2, 2);
 	interface->addBehavior<InterfaceBehavior>();
