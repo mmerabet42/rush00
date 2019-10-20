@@ -60,7 +60,26 @@ void Scene::update()
 {
 	clear();
 	timeout(1);
-
+	int randEnemy;
+	if(1 == rand() % 20)
+	{
+		 randEnemy = rand() % 2;
+		if(randEnemy == 0)
+		{
+			mvprintw(0, 0, "%s", "metheor init");
+				//addEntity metheor;
+		}
+		if(randEnemy == 1)
+		{
+			mvprintw(0, 0, "%s", "vaisseau init");
+				//addEntity metheor;
+		}
+		if(randEnemy == 2)
+		{
+			mvprintw(0, 0, "%s", "marcheur init");
+				//addEntity metheor;
+		}
+	}
 	for (List<EntityPair>::iterator it = this->_entities.begin(); it != this->_entities.end(); it = it->next())
 		it->value().b()->update();
 	for (DestroyQueue::iterator it = this->_destroyQueue.begin(); it != this->_destroyQueue.end(); it = it->next())
@@ -72,8 +91,8 @@ void Scene::update()
 
 	refresh();
 
-	if (!this->_isActive)
-		endwin();
+//	if (!this->_isActive)
+	//	endwin();
 }
 
 bool Scene::isActive() const
